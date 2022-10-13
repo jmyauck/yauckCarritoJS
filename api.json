@@ -1,0 +1,51 @@
+[
+    {
+        "id": 1,
+        "precio": 79999,
+        "marca": "Babolat",
+        "modelo": "Pure drive",
+        "imagen": "./images/babolat-pure-drive.png"
+    },
+    {
+        "id": 2,
+        "precio": 84999,
+        "marca": "Babolat",
+        "modelo": "Pure strike",
+        "imagen": "./images/babolat-pure-strike.jpg"
+    },
+    {
+        "id": 3,
+        "precio": 69000,
+        "marca": "Head",
+        "modelo": "Boom mp",
+        "imagen": "./images/boom-mp.jpg"
+    },
+    {
+        "id": 4,
+        "precio": 72500,
+        "marca": "Head",
+        "modelo": "Gravity mp",
+        "imagen": "./images/gravity-mp.jpg"
+    },
+    {
+        "id": 5,
+        "precio": 75000,
+        "marca": "Head",
+        "modelo": "Radical mp",
+        "imagen": "./images/radical-mp.jpg"
+    },
+    {
+        "id": 6,
+        "precio": 82200,
+        "marca": "Wilson",
+        "modelo": "Clash 98",
+        "imagen": "./images/wilson-clash-98.jpeg"
+    },
+    {
+        "id": 7,
+        "precio": 75899,
+        "marca": "Wilson",
+        "modelo": "Blade 98",
+        "imagen": "./images/wilson-blade-98.jpeg"
+    }
+]
