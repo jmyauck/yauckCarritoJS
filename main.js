@@ -1,12 +1,24 @@
+const cards = document.getElementById('cards')
 const items = document.getElementById('items')
+const footer = document.getElementById('footer')
 const templateCard = document.getElementById('template-card').content
+const templateFooter = document.getElementById('template-footer').content
+const templateCarrito = document.getElementById('template-carrito').content
 const fragment = document.createDocumentFragment()
-let carrit = {}
+let carrito = {}
 document.addEventListener('DOMContentLoaded', () => {
     fetchData()
+    if(localStorage.getItem('carrito')) {
+        carrito = JSON.parse(localStorage.getItem('carrito'))
+        visualizarCarrito()
+    }
+})
+//evento para referenciar la funcion de agregar al carrito
+cards.addEventListener('click', e => {
+    agregarCarrito(e)
 })
 items.addEventListener('click', e => {
-    agregarCarrito(e)
+    btnAccion(e)
 })
 //fetch para leer el archivo json
 const fetchData = async () => {
@@ -31,9 +43,9 @@ const agregarCards = data => {
         const clone = templateCard.cloneNode(true)
         fragment.appendChild(clone)
     })
-    items.appendChild(fragment)
+    cards.appendChild(fragment)
 }
-//funcion para llamar a los botones de cada card
+//funcion para llamar a los botones de cada card y agregarlos al carrito
 const agregarCarrito = e => {
 
     if (e.target.classList.contains('btn-dark')) {
@@ -41,16 +53,88 @@ const agregarCarrito = e => {
     }
     e.stopPropagation()
 } 
-//funcion para agregar los elementos del objeto
+//funcion para agregar los elementos del objeto y manipularlos
 const setCarrito = objeto => {
-    console.log(objeto)
     const producto = {
         id: objeto.querySelector('.btn-dark').dataset.id,
         marca: objeto.querySelector('h5').textContent,
         modelo: objeto.querySelector('h4').textContent,
         precio: objeto.querySelector('p').textContent,
-        cantidad: ""
+        cantidad: 1
+    }
+    if (carrito.hasOwnProperty(producto.id)) {
+            producto.cantidad = carrito[producto.id].cantidad + 1
+    }
+    carrito[producto.id] = { ...producto}
+    visualizarCarrito()
+}
+
+//visualizar elementos del carrito
+const visualizarCarrito = () => {
+/*     console.log(carrito) */
+    items.innerHTML = ''
+    Object.values(carrito).forEach(producto => {
+        templateCarrito.querySelector('th').textContent = producto.id
+        templateCarrito.querySelectorAll('td')[0].textContent = producto.marca
+        templateCarrito.querySelectorAll('td')[1].textContent = producto.cantidad
+        templateCarrito.querySelector('.btn-info').dataset.id = producto.id
+        templateCarrito.querySelector('.btn-danger').dataset.id = producto.id
+        templateCarrito.querySelector('span').textContent = producto.cantidad * producto.precio
+
+        const clone = templateCarrito.cloneNode(true)
+        fragment.appendChild(clone)
+    }) 
+    items.appendChild(fragment)
+
+    visualizarFooter()
+
+    localStorage.setItem('carrito', JSON.stringify(carrito))
+}
+
+const visualizarFooter = () => {
+    footer.innerHTML = ''
+    if(Object.keys(carrito).length === 0) {
+        footer.innerHTML = `
+        <th scope="row" colspan="5">No agregaste prodcutos al carrito aun</th>
+        `
+        return
+    }
+    const nCantidad = Object.values(carrito).reduce((acc, {cantidad}) => acc + cantidad , 0)
+    const nPrecio = Object.values(carrito).reduce((acc, {cantidad, precio}) => acc + cantidad * precio, 0)
+
+    templateFooter.querySelectorAll('td')[0].textContent = nCantidad
+    templateFooter.querySelector('span').textContent = nPrecio
+
+    const clone = templateFooter.cloneNode (true)
+    fragment.appendChild(clone)
+    footer.appendChild(fragment)
+
+    const btnVaciar = document.getElementById('vaciar-carrito')
+    btnVaciar.addEventListener('click', () => {
+        carrito = {}
+        visualizarCarrito()
+    })
+}
+
+const btnAccion = e => {
+
+    //aumentar  cantidades
+    if(e.target.classList.contains('btn-info')) {
+        carrito[e.target.dataset.id]
+        const producto = carrito[e.target.dataset.id]
+        producto.cantidad++
+        carrito[e.target.dataset.id] = {...producto}
+        visualizarCarrito()
+    }
+    //disminuir cantidades
+    if(e.target.classList.contains('btn-danger')) {
+        const producto = carrito[e.target.dataset.id]
+        producto.cantidad--
+        if (producto.cantidad === 0) {
+            delete carrito[e.target.dataset.id]
+        }
+        visualizarCarrito()
     }
 
-    console.log(producto)
+    e.stopPropagation()
 }
